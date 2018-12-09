@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <script src="lib/vue.min.js"></script>
+    <script src="lib/lodash.min.js"></script>
+    <script src="js/script.js"></script>
+    <title>Client VueJS restaurants</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,500,700,400italic|Material+Icons">
+    <link href="https://fonts.googleapis.com/css?family=Indie+Flower" rel="stylesheet">
+
+</head>
+
+<body>
+    <div id="app">
+        <h1>Resto à la carte</h1>
+        <div v-if="alert==true" id="edition_layer">
+            <div   v-if="edition_en_cours==true" class="card centred pop_up">
+                <form v-on:submit="edit_restaurant(event)">
+                                <h3>Modiffier informations</h3>
+                        Nom : <input type="text" name="nom" v-model="en_edition.name">
+
+
+                        Cuisine : <input style="margin-bottom: 15px" type="text" name="cuisine" v-model="en_edition.cuisine">
+                    <div class="button blue" v-on:click="abort_edition()" style="float:left;">Annuler </div>
+                    <button class="button green" style="float:right;" >Sauvegarder </button>
+                </form>
+
+
+            </div>
+            <div  v-if="creation_en_cours==true"  class="card centred pop_up">
+                <h3>Nouveau Restaurant</h3>
+                <form   v-on:submit="ajouterRestaurant(event)(event)">
+                    Nom:
+                     <input type="text" name="nom" v-model="nom">
+                    Cuisine:
+                     <input style="margin-bottom: 15px" type="text" name="cuisine" v-model="cuisine">
+                    <div class="button blue" v-on:click="abort_edition()"style="float:left;">Annuler </div>
+                     <button class="button green" style="float:right;" >Rajouter</button>
+                </form>
+
+            </div>
+        </div>
+
+    <div class="card centred" id="main_container">
+
+
+        <div id="recherche">
+                <input v-on:input="searchRestaurantsFromServer" type="text" v-model="nomRecherche" placeholder="Rechercher">
+                <img  v-on:click="open_create_restaurant()" class="actionIcon" src="img/add.png">
+        </div>
+
+       <div id="reglages">
+           Nb restaurants par page :
+           <input style="margin-top:10px;" type="range" min=5 max=100 value=10 v-on:input="changePageSize" v-model="nbRestaurantsParPage">
+           {{nbRestaurantsParPage}}/{{nbRestaurants}}
+       </div>
+        <div class="tab_header">
+            <div>
+                NOM
+            </div>
+            <div>
+                CUISINE
+            </div>
+        </div>
+        <div id="results">
+            <table style="width:100%;">
+                <tr v-for="r,index in restaurants">
+                    <td style="width:50%;" >{{r.name}} </td>
+                    <td style="width:50%;">
+                        <div style="width:130px;float:left;word-wrap: break-word;">{{r.cuisine}}</div>
+                        <img  v-on:click="open_edit_restaurant(r)" class="actionIcon" src="img/pen.png">
+                        <img  v-on:click="supprimerRestaurant(r._id)" class="actionIcon" src="img/bin.png">
+
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+
+        <div id="pagination">
+            <div v-if="page!=0" class="pagination_element button blue"v-on:click="premiere_page()">first</div>
+            <div v-if="page!=0"class=" pagination_element " v-on:click="pagePrecedente()">
+                <div class=" icon_button button blue" style="float: right" >
+                    <img class=" actionIcon" src="img/prev.png">
+                </div>
+            </div>
+            <div class=" pagination_element" style="padding-top:5px">{{page + 1}} / {{ pageMax()+1}}</div>
+            <div v-if="page!= pageMax()"class=" pagination_element " v-on:click="pageSuivante()">
+                <div class=" icon_button button blue" >
+                  <img class="actionIcon " src="img/next.png">
+                </div>
+            </div>
+            <div v-if="page!= pageMax()"class=" pagination_element button blue" v-on:click=" derniere_page()">last</div>
+        </div>
+    </div>
+    </div>
+
+
+</body>
+
+</html>
